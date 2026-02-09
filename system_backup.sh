@@ -1,6 +1,13 @@
 #!/bin/bash
 deb_ver=`cat /etc/debian_version | tr -d '\n'`
 
+# Detect Raspberry Pi OS version and set boot path
+if grep -q "VERSION_ID=\"1[2-9]" /etc/os-release || grep -q "VERSION_ID=\"[2-9][0-9]" /etc/os-release; then
+    boot_path="/boot/firmware/"
+else
+    boot_path="/boot/"
+fi
+
 if [ ! -d "./.system_backup" ]; then
 sudo mkdir ./.system_backup
 fi
@@ -22,7 +29,7 @@ sudo mkdir -p ./.system_backup/xorg.conf.d
 sudo rm -rf /etc/X11/xorg.conf.d
 fi
 
-result=`grep -rn "^dtoverlay=" /boot/config.txt | grep ":rotate=" | tail -n 1`
+result=`grep -rn "^dtoverlay=" ${boot_path}/config.txt | grep ":rotate=" | tail -n 1`
 if [ $? -eq 0 ]; then
 str=`echo -n $result | awk -F: '{printf $2}' | awk -F= '{printf $NF}'`
 if [ -f /boot/overlays/$str-overlay.dtb ]; then
@@ -35,21 +42,21 @@ sudo rm -rf /boot/overlays/$str.dtbo
 fi
 fi
 
-root_dev=`grep -oPr "root=[^\s]*" /boot/cmdline.txt | awk -F= '{printf $NF}'`
-sudo cp -rf /boot/config.txt ./.system_backup
-sudo cp -rf /boot/cmdline.txt ./.system_backup/
+root_dev=`grep -oPr "root=[^\s]*" ${boot_path}/cmdline.txt | awk -F= '{printf $NF}'`
+sudo cp -rf ${boot_path}/config.txt ./.system_backup
+sudo cp -rf ${boot_path}/cmdline.txt ./.system_backup/
 if test "$root_dev" = "/dev/mmcblk0p7";then
-sudo cp -rf ./boot/config-noobs-nomal.txt /boot/config.txt
-#sudo cp -rf ./usr/cmdline.txt-noobs-original /boot/cmdline.txt
+sudo cp -rf ${boot_path}/config-noobs-nomal.txt ${boot_path}/config.txt
+#sudo cp -rf ./usr/cmdline.txt-noobs-original ${boot_path}/cmdline.txt
 else
-sudo cp -rf ./boot/config-nomal.txt /boot/config.txt
+sudo cp -rf ${boot_path}/config-nomal.txt ${boot_path}/config.txt
 
 if [[ "$deb_ver" = "13.1" ]] || [[ "$deb_ver" > "13.1" ]]; then
 sudo sed -i '/ video/s/ video.*$//' /boot/firmware/cmdline.txt
 sudo sed -i "/xrandr/d" /etc/xdg/lxsession/rpd-x/autostart
 #sudo cp -rf ./usr/cmdline.txt-original /boot/firmware/cmdline.txt
 #sudo cp ./etc/autostart /etc/xdg/lxsession/rpd-x/
-fi
+fi21.
 
 fi
 if [ -f /usr/share/X11/xorg.conf.d/99-fbturbo.conf ]; then
