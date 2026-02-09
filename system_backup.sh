@@ -56,7 +56,7 @@ sudo sed -i '/ video/s/ video.*$//' /boot/firmware/cmdline.txt
 sudo sed -i "/xrandr/d" /etc/xdg/lxsession/rpd-x/autostart
 #sudo cp -rf ./usr/cmdline.txt-original /boot/firmware/cmdline.txt
 #sudo cp ./etc/autostart /etc/xdg/lxsession/rpd-x/
-fi21.
+fi
 
 fi
 if [ -f /usr/share/X11/xorg.conf.d/99-fbturbo.conf ]; then
