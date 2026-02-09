@@ -3,9 +3,9 @@ deb_ver=`cat /etc/debian_version | tr -d '\n'`
 
 # Detect Raspberry Pi OS version and set boot path
 if grep -q "VERSION_ID=\"1[2-9]" /etc/os-release || grep -q "VERSION_ID=\"[2-9][0-9]" /etc/os-release; then
-    boot_path="/boot/firmware/"
+    boot_path="/boot/firmware"
 else
-    boot_path="/boot/"
+    boot_path="/boot"
 fi
 
 if [ ! -d "./.system_backup" ]; then
